@@ -58,12 +58,12 @@ describe("Testando signup", () => {
         password: "fulano123"
       })
 
-      const output = await userBusiness.signup(input)
+      await userBusiness.signup(input)
 
     } catch (error) {
       if (error instanceof BadRequestError) {
-        expect(error.statusCode).toBe(400)
         expect(error.message).toBe("e-mail já existe")
+        expect(error.statusCode).toBe(400)
       }
     }
   })

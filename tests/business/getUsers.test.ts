@@ -1,5 +1,6 @@
 import { UserBusiness } from "../../src/business/UserBusiness"
 import { GetUsersSchema } from "../../src/dtos/user/getUsers.dto"
+import { BadRequestError } from "../../src/errors/BadRequestError"
 import { USER_ROLES } from "../../src/models/User"
 import { HashManagerMock } from "../mocks/HashManagerMock"
 import { IdGeneratorMock } from "../mocks/IdGeneratorMock"
@@ -30,4 +31,15 @@ describe("Testando getUsers", () => {
       role: USER_ROLES.ADMIN
     })
   })
+
+  test("deve retornar um erro se o token for invalido", async () => {
+    expect(async () => {
+      const input = GetUsersSchema.parse({
+        token: "token-invalido"
+      })
+
+        await userBusiness.getUsers(input)
+
+    }).rejects.toThrow(new BadRequestError("token inválido"))
+})
 })

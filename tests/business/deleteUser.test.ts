@@ -27,4 +27,45 @@ describe("Testando deleteUser", () => {
       message: "Deleção realizada com sucesso"
     })
   })
+
+
+  test("deve retornar erro caso token invalido", async () => {
+    expect.assertions(2)
+
+    try {
+      const input = DeleteUserSchema.parse({
+        idToDelete: "id-mock-fulano",
+        token: "token-invalido"
+      })
+
+      await userBusiness.deleteUser(input)
+
+    } catch (error) {
+        if(error instanceof BadRequestError){
+          expect(error.message).toBe("token inválido")
+          expect(error.statusCode).toBe(400)
+        }
+      }
+  })
+
+
+  test("não deve ser possível deletar contra de outra pessoa.", async () => {
+    expect.assertions(2)
+
+    try {
+      const input = DeleteUserSchema.parse({
+        idToDelete: "id-mock-astrodev",
+        token: "token-mock-fulano"
+      })
+
+      await userBusiness.deleteUser(input)
+
+    } catch (error) {
+        if(error instanceof BadRequestError){
+          expect(error.message).toBe("somente quem criou a conta pode deletá-la")
+          expect(error.statusCode).toBe(400)
+        }
+      }
+  })
+
 })
